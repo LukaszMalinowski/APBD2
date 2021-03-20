@@ -5,8 +5,10 @@ namespace cwiczenia2_zen_s19743.Repository
 {
     public interface IStudentRepository
     {
-        List<Student> getAllStudents();
+        List<Student> GetAllStudents();
 
-        Student getStudentByIndexNumber(string indexNumber);
+        Student GetStudentByIndexNumber(string indexNumber);
+
+        Student UpdateStudentByIndexNumber(string indexNumber, Student student);
     }
 }

@@ -9,36 +9,67 @@ namespace cwiczenia2_zen_s19743.Repository
 {
     public class StudentFileRepository : IStudentRepository
     {
-        public List<Student> getAllStudents()
+        private const string DbFileName = "./Data/students.csv";
+        
+        public List<Student> GetAllStudents()
         {
-            return getStudentListFromFile();
+            return GetStudentListFromFile();
         }
 
-        public Student getStudentByIndexNumber(string indexNumber)
+        public Student GetStudentByIndexNumber(string indexNumber)
         {
-            List<Student> students = getStudentListFromFile();
+            List<Student> students = GetStudentListFromFile();
             
             Student first = students.FirstOrDefault(student => student.IndexNumber.Equals(indexNumber));
             
             return first;
         }
 
-        private List<Student> getStudentListFromFile()
+        public Student UpdateStudentByIndexNumber(string indexNumber, Student student)
         {
-            FileInfo fi = new FileInfo("./Data/students.csv");
+            List<Student> students = GetStudentListFromFile();
+
+            if (!students.Any(student => student.IndexNumber.Equals(indexNumber)))
+            {
+                return null;
+            }
+
+            student.IndexNumber = indexNumber;
+            
+            UpdateStudentInFile(student);
+
+            return student;
+        }
+
+        private List<Student> GetStudentListFromFile()
+        {
+            FileInfo fi = new FileInfo(DbFileName);
             var students = new List<Student>();
             StreamReader reader = new StreamReader(fi.OpenRead());
             
             string line;
             while ((line = reader.ReadLine()) != null)
             {
-                var student = StudentParser.parseStudent(line);
+                var student = StudentParser.ParseStudent(line);
                 students.Add(student);
             }
             reader.Close();
             reader.Dispose();
 
             return students;
+        }
+
+        private void UpdateStudentInFile(Student student)
+        {
+            string[] allLines = File.ReadAllLines(DbFileName);
+            for (int i = 0; i < allLines.Length; i++)
+            {
+                if (allLines[i].Contains(student.IndexNumber))
+                {
+                    allLines[i] = student.ToString();
+                }
+            }
+            File.WriteAllLines(DbFileName, allLines);
         }
     }
 }

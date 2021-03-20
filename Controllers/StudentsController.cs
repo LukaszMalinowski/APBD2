@@ -12,23 +12,35 @@ namespace cwiczenia2_zen_s19743.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private IStudentRepository _repository = new StudentFileRepository();
+        private readonly IStudentRepository _repository = new StudentFileRepository();
         
         [HttpGet]
         public IActionResult GetStudents()
         {
-            return Ok(_repository.getAllStudents());
+            return Ok(_repository.GetAllStudents());
         }
 
         [HttpGet] 
         [Route("{indexNumber?}")]
         public IActionResult GetStudentByIndexNumber(string? indexNumber)
         {
-            Student student = _repository.getStudentByIndexNumber(indexNumber);
+            Student student = _repository.GetStudentByIndexNumber(indexNumber);
             if (student != null)
                 return Ok(student);
             
             return NotFound();
+        }
+
+        [HttpPut]
+        [Route("{indexNumber?}")]
+        public IActionResult UpdateStudentByIndexNumber(string? indexNumber,[FromBody] Student student)
+        {
+            Student updatedStudent = _repository.UpdateStudentByIndexNumber(indexNumber, student);
+
+            if (updatedStudent != null)
+                return Ok(updatedStudent);
+
+            return NoContent();
         }
     }
 }

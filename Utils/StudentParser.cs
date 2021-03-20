@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 using cwiczenia2_zen_s19743.Model;
 
 namespace cwiczenia2_zen_s19743.Utils
 {
     public class StudentParser
     {
-        public static Student parseStudent(string line)
+        public static Student ParseStudent(string line)
         {
             var split = line.Split(",");
             if (split.Length != 9)
@@ -15,14 +16,23 @@ namespace cwiczenia2_zen_s19743.Utils
             return new Student(split[0],
                 split[1],
                 split[2],
-                parseDate(split[3]),
+                ParseDate(split[3]),
                 split[4],
                 split[5],
                 split[6],
-                split[7]);
+                split[7],
+                split[8]);
         }
 
-        private static DateTime parseDate(string date)
+        public static string ParseToFileLine(Student student)
+        {
+            
+            
+            
+            return "";
+        }
+
+        private static DateTime ParseDate(string date)
         {
             var split = date.Split(@"/");
 
