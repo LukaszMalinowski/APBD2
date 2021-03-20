@@ -6,5 +6,7 @@ namespace cwiczenia2_zen_s19743.Repository
     public interface IStudentRepository
     {
         List<Student> getAllStudents();
+
+        Student getStudentByIndexNumber(string indexNumber);
     }
 }
