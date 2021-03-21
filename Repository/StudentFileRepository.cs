@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using cwiczenia2_zen_s19743.Model;
 using cwiczenia2_zen_s19743.Utils;
+using Microsoft.AspNetCore.Http;
 
 namespace cwiczenia2_zen_s19743.Repository
 {
@@ -27,11 +28,16 @@ namespace cwiczenia2_zen_s19743.Repository
 
         public Student UpdateStudentByIndexNumber(string indexNumber, Student student)
         {
-            List<Student> students = GetStudentListFromFile();
-
-            if (!students.Any(student => student.IndexNumber.Equals(indexNumber)))
+            student.IndexNumber ??= indexNumber;
+            
+            if (!StudentValidator.StudentExist(indexNumber, GetStudentListFromFile()))
             {
                 throw new Exception("Student not found!");
+            }
+            
+            if (StudentValidator.StudentHasNullFields(student))
+            {
+                throw new BadHttpRequestException("Student has null fields!");
             }
 
             student.IndexNumber = indexNumber;
@@ -43,17 +49,14 @@ namespace cwiczenia2_zen_s19743.Repository
 
         public Student AddStudent(Student student)
         {
-            bool studentExist = StudentValidator.CheckIfStudentExist(student.IndexNumber, GetStudentListFromFile());
-            bool studentHasNulls = StudentValidator.CheckIfStudentHasNullFields(student);
-
-            if (studentExist)
+            if (StudentValidator.StudentExist(student.IndexNumber, GetStudentListFromFile()))
             {
                 throw new Exception("Student already exists!");
             }
 
-            if (studentHasNulls)
+            if (StudentValidator.StudentHasNullFields(student))
             {
-                throw new Exception("Student has null fields!");
+                throw new BadHttpRequestException("Student has null fields!");
             }
 
             AddStudentToFile(student);
@@ -63,9 +66,7 @@ namespace cwiczenia2_zen_s19743.Repository
 
         public void DeleteStudentByIndexNumber(string indexNumber)
         {
-            bool studentExist = StudentValidator.CheckIfStudentExist(indexNumber, GetStudentListFromFile());
-
-            if (!studentExist)
+            if (!StudentValidator.StudentExist(indexNumber, GetStudentListFromFile()))
             {
                 throw new Exception("Student doesn't exist!");
             }
@@ -80,17 +81,15 @@ namespace cwiczenia2_zen_s19743.Repository
                 .ToList();
         }
 
-        private void UpdateStudentInFile(Student student)
+        private void UpdateStudentInFile(Student updatedStudent)
         {
-            string[] allLines = File.ReadAllLines(DbFileName);
-            for (int i = 0; i < allLines.Length; i++)
-            {
-                if (allLines[i].Contains(student.IndexNumber))
-                {
-                    allLines[i] = student.ToString();
-                }
-            }
-            File.WriteAllLines(DbFileName, allLines);
+            var lines = File.ReadAllLines(DbFileName)
+                .Select(StudentParser.ParseStudent)
+                .Select(student => student.IndexNumber.Equals(updatedStudent.IndexNumber) ? updatedStudent : student)
+                .Select(student => student.ToString())
+                .ToArray();
+            
+            File.WriteAllLines(DbFileName, lines);
         }
         
         private void AddStudentToFile(Student student)
@@ -106,7 +105,7 @@ namespace cwiczenia2_zen_s19743.Repository
                 .Select(student => student.ToString())
                 .ToArray();
             
-            File.WriteAllLines(DbFileName, lines);
+            File.WriteAllText(DbFileName, string.Join(Environment.NewLine, lines));
         }
     }
 }

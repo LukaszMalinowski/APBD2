@@ -2,6 +2,7 @@
 using System;
 using cwiczenia2_zen_s19743.Model;
 using cwiczenia2_zen_s19743.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cwiczenia2_zen_s19743.Controllers
@@ -39,10 +40,15 @@ namespace cwiczenia2_zen_s19743.Controllers
             {
                 updatedStudent = _repository.UpdateStudentByIndexNumber(indexNumber, student);
             }
+            catch (BadHttpRequestException e)
+            {
+                return BadRequest(e.Message);
+            }
             catch (Exception)
             {
                 return NoContent();
             }
+            
 
             return Ok(updatedStudent);
         }
