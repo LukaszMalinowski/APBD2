@@ -75,20 +75,9 @@ namespace cwiczenia2_zen_s19743.Repository
 
         private List<Student> GetStudentListFromFile()
         {
-            FileInfo fi = new FileInfo(DbFileName);
-            var students = new List<Student>();
-            StreamReader reader = new StreamReader(fi.OpenRead());
-            
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                var student = StudentParser.ParseStudent(line);
-                students.Add(student);
-            }
-            reader.Close();
-            reader.Dispose();
-
-            return students;
+            return File.ReadAllLines(DbFileName)
+                .Select(StudentParser.ParseStudent)
+                .ToList();
         }
 
         private void UpdateStudentInFile(Student student)

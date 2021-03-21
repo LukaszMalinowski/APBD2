@@ -24,14 +24,6 @@ namespace cwiczenia2_zen_s19743.Utils
                 split[8]);
         }
 
-        public static string ParseToFileLine(Student student)
-        {
-            
-            
-            
-            return "";
-        }
-
         private static DateTime ParseDate(string date)
         {
             var split = date.Split(@"/");
