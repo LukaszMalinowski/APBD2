@@ -61,6 +61,18 @@ namespace cwiczenia2_zen_s19743.Repository
             return student;
         }
 
+        public void DeleteStudentByIndexNumber(string indexNumber)
+        {
+            bool studentExist = StudentValidator.CheckIfStudentExist(indexNumber, GetStudentListFromFile());
+
+            if (!studentExist)
+            {
+                throw new Exception("Student doesn't exist!");
+            }
+            
+            DeleteStudentFromFile(indexNumber);
+        }
+
         private List<Student> GetStudentListFromFile()
         {
             FileInfo fi = new FileInfo(DbFileName);
@@ -95,6 +107,17 @@ namespace cwiczenia2_zen_s19743.Repository
         private void AddStudentToFile(Student student)
         {
             File.AppendAllText(DbFileName, Environment.NewLine + student);
+        }
+
+        private void DeleteStudentFromFile(string indexNumber)
+        {
+            var lines = File.ReadAllLines(DbFileName)
+                .Select(StudentParser.ParseStudent)
+                .Where(student => !student.IndexNumber.Equals(indexNumber))
+                .Select(student => student.ToString())
+                .ToArray();
+            
+            File.WriteAllLines(DbFileName, lines);
         }
     }
 }

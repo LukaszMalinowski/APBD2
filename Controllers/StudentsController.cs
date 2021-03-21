@@ -62,5 +62,21 @@ namespace cwiczenia2_zen_s19743.Controllers
 
             return Ok(addedStudent);
         }
+        
+        [HttpDelete]
+        [Route("{indexNumber?}")]
+        public IActionResult DeleteStudentByIndexNumber(string? indexNumber)
+        {
+            try
+            {
+                _repository.DeleteStudentByIndexNumber(indexNumber);
+            }
+            catch (Exception)
+            {
+                return NoContent();
+            }
+            
+            return Ok();
+        }
     }
 }
