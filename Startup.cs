@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using cwiczenia2_zen_s19743.Repository;
 
 namespace cwiczenia2_zen_s19743
 {
@@ -25,7 +26,10 @@ namespace cwiczenia2_zen_s19743
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddScoped<IStudentRepository, StudentFileRepository>();
+            
+            services.AddRazorPages();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

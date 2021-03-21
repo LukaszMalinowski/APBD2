@@ -11,7 +11,12 @@ namespace cwiczenia2_zen_s19743.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly IStudentRepository _repository = new StudentFileRepository();
+        private readonly IStudentRepository _repository;
+
+        public StudentController(IStudentRepository repository)
+        {
+            _repository = repository;
+        }
 
         [HttpGet]
         public IActionResult GetStudents()
