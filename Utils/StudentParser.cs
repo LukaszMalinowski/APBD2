@@ -5,7 +5,7 @@ using cwiczenia2_zen_s19743.Model;
 
 namespace cwiczenia2_zen_s19743.Utils
 {
-    public class StudentParser
+    public static class StudentParser
     {
         public static Student ParseStudent(string line)
         {

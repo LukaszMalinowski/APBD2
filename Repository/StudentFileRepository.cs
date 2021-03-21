@@ -31,12 +31,32 @@ namespace cwiczenia2_zen_s19743.Repository
 
             if (!students.Any(student => student.IndexNumber.Equals(indexNumber)))
             {
-                return null;
+                throw new Exception("Student not found!");
             }
 
             student.IndexNumber = indexNumber;
             
             UpdateStudentInFile(student);
+
+            return student;
+        }
+
+        public Student AddStudent(Student student)
+        {
+            bool studentExist = StudentValidator.CheckIfStudentExist(student.IndexNumber, GetStudentListFromFile());
+            bool studentHasNulls = StudentValidator.CheckIfStudentHasNullFields(student);
+
+            if (studentExist)
+            {
+                throw new Exception("Student already exists!");
+            }
+
+            if (studentHasNulls)
+            {
+                throw new Exception("Student has null fields!");
+            }
+
+            AddStudentToFile(student);
 
             return student;
         }
@@ -70,6 +90,11 @@ namespace cwiczenia2_zen_s19743.Repository
                 }
             }
             File.WriteAllLines(DbFileName, allLines);
+        }
+        
+        private void AddStudentToFile(Student student)
+        {
+            File.AppendAllText(DbFileName, Environment.NewLine + student);
         }
     }
 }

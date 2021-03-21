@@ -10,5 +10,7 @@ namespace cwiczenia2_zen_s19743.Repository
         Student GetStudentByIndexNumber(string indexNumber);
 
         Student UpdateStudentByIndexNumber(string indexNumber, Student student);
+
+        Student AddStudent(Student student);
     }
 }

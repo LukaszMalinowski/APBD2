@@ -1,7 +1,5 @@
 ﻿#nullable enable
 using System;
-using System.Collections.Generic;
-using System.IO;
 using cwiczenia2_zen_s19743.Model;
 using cwiczenia2_zen_s19743.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -13,34 +11,56 @@ namespace cwiczenia2_zen_s19743.Controllers
     public class StudentController : ControllerBase
     {
         private readonly IStudentRepository _repository = new StudentFileRepository();
-        
+
         [HttpGet]
         public IActionResult GetStudents()
         {
             return Ok(_repository.GetAllStudents());
         }
 
-        [HttpGet] 
+        [HttpGet]
         [Route("{indexNumber?}")]
         public IActionResult GetStudentByIndexNumber(string? indexNumber)
         {
             Student student = _repository.GetStudentByIndexNumber(indexNumber);
             if (student != null)
                 return Ok(student);
-            
+
             return NotFound();
         }
 
         [HttpPut]
         [Route("{indexNumber?}")]
-        public IActionResult UpdateStudentByIndexNumber(string? indexNumber,[FromBody] Student student)
+        public IActionResult UpdateStudentByIndexNumber(string? indexNumber, [FromBody] Student student)
         {
-            Student updatedStudent = _repository.UpdateStudentByIndexNumber(indexNumber, student);
+            Student updatedStudent;
 
-            if (updatedStudent != null)
-                return Ok(updatedStudent);
+            try
+            {
+                updatedStudent = _repository.UpdateStudentByIndexNumber(indexNumber, student);
+            }
+            catch (Exception)
+            {
+                return NoContent();
+            }
 
-            return NoContent();
+            return Ok(updatedStudent);
+        }
+
+        [HttpPost]
+        public IActionResult AddStudent([FromBody] Student student)
+        {
+            Student addedStudent;
+            try
+            {
+                addedStudent = _repository.AddStudent(student);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(addedStudent);
         }
     }
 }
