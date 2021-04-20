@@ -46,6 +46,8 @@ namespace cwiczenia2_zen_s19743
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "cwiczenia2_zen_s19743 v1"));
             }
+            
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
